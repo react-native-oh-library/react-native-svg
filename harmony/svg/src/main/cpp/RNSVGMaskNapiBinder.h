@@ -57,13 +57,13 @@ public:
                 .addProperty("strokeDashoffset", props->strokeDashoffset)
                 .addProperty("strokeMiterlimit", props->strokeMiterlimit)
                 .addProperty("vectorEffect", props->vectorEffect)
-                .addProperty("fontSize", props->fontSize);
-                .addProperty("fontWeight", props->fontWeight);
-                .addProperty("x", props->x);
-                .addProperty("y", props->y);
-                .addProperty("height", props->height);
-                .addProperty("width", props->width);
-                .addProperty("maskUnits", props->maskUnits);
+                .addProperty("fontSize", props->fontSize)
+                .addProperty("fontWeight", props->fontWeight)
+                .addProperty("x", props->x)
+                .addProperty("y", props->y)
+                .addProperty("height", props->height)
+                .addProperty("width", props->width)
+                .addProperty("maskUnits", props->maskUnits)
                 .addProperty("maskContentUnits", props->maskContentUnits);
 
             auto matrix = std::vector<napi_value>();

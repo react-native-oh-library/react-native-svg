@@ -57,7 +57,7 @@ function componentProcessing(ctx: RNOHContext, tag: Tag, key: string) {
     let descriptorTemp: SVGRectDescriptor = ctx.descriptorRegistry.getDescriptor<SVGRectDescriptor>(tag)
     let value: SVGClipPathObj = { type, tag, value: new Rect({
       width: '100%',
-      heigth: '100%',
+      height: '100%',
       radiusWidth: getRadius(descriptorTemp.props.rx, descriptorTemp.props.ry),
       radiusHeight: getRadius(descriptorTemp.props.ry, descriptorTemp.props.rx)
     }) }

@@ -75,7 +75,7 @@ std::vector<react::ComponentDescriptorProvider> SVGPackage::createComponentDescr
             react::concreteComponentDescriptorProvider<react::RNSVGTextComponentDescriptor>(),
             react::concreteComponentDescriptorProvider<react::RNSVGTSpanComponentDescriptor>(),
             react::concreteComponentDescriptorProvider<react::RNSVGClipPathComponentDescriptor>(),
-            react::concreteComponentDescriptorProvider<react::RNSVGMaskComponentDescriptor>()},
+            react::concreteComponentDescriptorProvider<react::RNSVGMaskComponentDescriptor>(),
             react::concreteComponentDescriptorProvider<react::RNSVGUseComponentDescriptor>()};
 }
 
@@ -93,7 +93,7 @@ ComponentNapiBinderByString rnoh::SVGPackage::createComponentNapiBinderByName()
             {"RNSVGText", std::make_shared<RNSVGTextNapiBinder>()},
             {"RNSVGTSpan", std::make_shared<RNSVGTSpanNapiBinder>()},
             {"RNSVGClipPath", std::make_shared<RNSVGClipPathNapiBinder>()},
-            {"RNSVGMask", std::make_shared<RNSVGMaskNapiBinder>()}},
+            {"RNSVGMask", std::make_shared<RNSVGMaskNapiBinder>()},
             {"RNSVGUse", std::make_shared<RNSVGUseNapiBinder>()}};
 }
 
@@ -111,6 +111,6 @@ ComponentJSIBinderByString rnoh::SVGPackage::createComponentJSIBinderByName()
             {"RNSVGText", std::make_shared<RNSVGTextJSIBinder>()},
             {"RNSVGTSpan", std::make_shared<RNSVGTSpanJSIBinder>()},
             {"RNSVGClipPath", std::make_shared<RNSVGClipPathJSIBinder>()},
-            {"RNSVGMask", std::make_shared<RNSVGMaskJSIBinder>()}},
+            {"RNSVGMask", std::make_shared<RNSVGMaskJSIBinder>()},
             {"RNSVGUse", std::make_shared<RNSVGUseJSIBinder>()}};
 };
