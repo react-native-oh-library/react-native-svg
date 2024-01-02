@@ -22,17 +22,18 @@
  * SOFTWARE.
  */
 
-import { Descriptor, RNComponentFactory, RNOHContext, ComponentBuilderContext, Tag, } from 'rnoh'
-import { SVGGroupProps } from './common/SVGType'
-import { setGroupDescriptor } from './common/SVGTempCache'
-import { SVG_DEFS_TYPE_NAME, SVGDefsFactory } from './common/SVGDefsFactory'
-import { getTransform } from './common/SVGCommon'
-import Logger from './common/log/Logger'
+import { Descriptor, RNOHContext, ComponentBuilderContext, Tag, } from 'rnoh'
+import { SVGGroupProps } from '../common/SVGType'
+import { setGroupDescriptor } from '../common/SVGTempCache'
+import { SVG_DEFS_TYPE_NAME, SVGDefsFactory } from '../common/SVGDefsFactory'
+import { getTransform } from '../common/SVGCommon'
+import Logger from '../common/log/Logger'
 import { SVGPathDescriptor, SVG_PATH_TYPE_NAME } from './SVGPath'
 import { SVGRectDescriptor, SVG_RECT_TYPE_NAME } from './SVGRect'
-import { parseFill, parseStroke } from './common/SVGMergeProperties'
+import { parseFill, parseStroke } from '../common/SVGMergeProperties'
 import { SVGTextDescriptor, SVG_TEXT_TYPE_NAME } from './SVGText'
 import { SVGImageDescriptor, SVG_IMAGE_TYPE_NAME } from './SVGImage'
+import { SVGComponentFactory } from '../SVGComponentFactory'
 
 export const SVG_GROUP_TYPE_NAME: string = "RNSVGGroup"
 
@@ -57,7 +58,7 @@ export struct SVGGroup {
     this.unregisterDescriptorChangesListener = this.ctx.descriptorRegistry.subscribeToDescriptorChanges(this.tag,
       (newDescriptor) => {
         this.descriptor = (newDescriptor as SVGGroupDescriptor)
-		setGroupDescriptor(this.tag, this.descriptor)
+        setGroupDescriptor(this.tag, this.descriptor)
       }
     )
     setGroupDescriptor(this.tag, this.descriptor)
@@ -147,7 +148,7 @@ export struct SVGGroup {
   build() {
     Shape() {
       ForEach(this.getChildrenDescriptors(), (tag: Tag) => {
-        RNComponentFactory({ ctx: this.ctx, tag: tag, buildCustomComponent: this.buildCustomComponent })
+        SVGComponentFactory({ ctx: this.ctx, tag: tag, buildCustomComponent: this.buildCustomComponent })
       }, (tag: Tag) => tag.toString())
     }
     .position(this.descriptor.layoutMetrics.frame.origin)

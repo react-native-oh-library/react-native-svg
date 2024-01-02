@@ -23,12 +23,12 @@
  */
 
 import { Descriptor, RNOHContext } from 'rnoh'
-import Logger from './common/log/Logger'
-import { getColor, getScaleX, getScaleY, getSvgViewTag, getTransform } from './common/SVGCommon'
-import { getViewDescriptor, getDefsDescriptor } from './common/SVGTempCache'
-import { SVGPathProps } from './common/SVGType'
-import { SVGViewDescriptor } from './SVGView'
-import { SVGLinearGradient, SVGLinearGradientValue } from './common/SVGLinearGradient'
+import Logger from '../common/log/Logger'
+import { getColor, getScaleX, getScaleY, getSvgViewTag, getTransform } from '../common/SVGCommon'
+import { getViewDescriptor, getDefsDescriptor } from '../common/SVGTempCache'
+import { SVGPathProps } from '../common/SVGType'
+import { SVGViewDescriptor } from '../SVGView'
+import { SVGLinearGradient, SVGLinearGradientValue } from '../common/SVGLinearGradient'
 
 export const SVG_PATH_TYPE_NAME: string = "RNSVGPath"
 
@@ -50,13 +50,13 @@ export struct SVGPath {
     this.unregisterDescriptorChangesListener = this.ctx.descriptorRegistry.subscribeToDescriptorChanges(this.tag,
       (newDescriptor) => {
         this.descriptor = (newDescriptor as SVGPathDescriptor)
-		this.getGradientEnable()
-		Logger.debug("RNOH SVGPath New", JSON.stringify(this.descriptor))
+        this.getGradientEnable()
+        Logger.debug("RNOH SVGPath New", JSON.stringify(this.descriptor))
       }
     )
     Logger.debug("RNOH SVGPath", JSON.stringify(this.descriptor))
     this.initScale()
-	this.getGradientEnable()
+    this.getGradientEnable()
   }
 
   aboutToDisappear() {
@@ -67,12 +67,12 @@ export struct SVGPath {
     if (this.descriptor.props.fill?.type == 1) {
       let gradientTemp: SVGLinearGradient | undefined = getDefsDescriptor(this.descriptor.props.fill?.brushRef) as SVGLinearGradient
       if (gradientTemp) {
-		this.gradient = gradientTemp
-		this.gradientEnable = true
-		return
+        this.gradient = gradientTemp
+        this.gradientEnable = true
+        return
       }
     }
-	this.gradientEnable = false
+    this.gradientEnable = false
   }
 
   initScale() {
@@ -93,20 +93,20 @@ export struct SVGPath {
   getLinearGradient() {
     if (this.gradientEnable) {
       let linearGradientValue: SVGLinearGradientValue = {
-		direction: thia.gradient.direction,
-		repeating: true,
-		colors: this.gradient.colors
-	  }
-	  return linearGradientValue
+        direction: this.gradient.direction,
+        repeating: true,
+        colors: this.gradient.colors
+      }
+      return linearGradientValue
     }
-	return undefined
+    return undefined
   }
 
   getClip() {
-	return this.gradientEnable ? new Path({
-    width: "100%",
-    heigth: "100%",
-	  commands: this.descriptor.props.d }) : undefined
+    return this.gradientEnable ? new Path({
+      width: "100%",
+      height: "100%",
+      commands: this.descriptor.props.d }) : undefined
   }
 
   build() {

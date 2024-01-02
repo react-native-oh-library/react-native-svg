@@ -23,9 +23,9 @@
  */
 
 import { Descriptor, RNOHContext, } from 'rnoh'
-import Logger from './common/log/Logger'
-import { getColor, getOffset, getTransform } from './common/SVGCommon'
-import { NumberProp, FontWeight, SVGTextProps, SVGTSpanProps } from './common/SVGType'
+import Logger from '../common/log/Logger'
+import { getColor, getOffset, getTransform } from '../common/SVGCommon'
+import { NumberProp, FontWeight, SVGTextProps, SVGTSpanProps } from '../common/SVGType'
 
 export const SVG_TEXT_TYPE_NAME: string = "RNSVGText"
 
@@ -60,7 +60,6 @@ export struct SVGText {
     let childrenDescriptors: SVGTSpanDescriptor[] = []
     for (let i = 0; i < this.descriptor.childrenTags.length; i++) {
       let tSpanDescriptor = this.ctx.descriptorRegistry.getDescriptor<SVGTSpanDescriptor>(this.descriptor.childrenTags[i])
-      // console.info("RNOH SVGText tSpan Descriptor", JSON.stringify(tSpanDescriptor))
       childrenDescriptors.push(tSpanDescriptor)
     }
     return childrenDescriptors
@@ -101,7 +100,7 @@ export struct SVGText {
         Span(tSpanDescriptor.props.content)
           .fontSize(this.getFontSize(tSpanDescriptor.props.font?.fontSize))
           .fontWeight(this.getFontWeight(tSpanDescriptor.props.font?.fontWeight))
-		  .opacity(tSpanDescriptor.props.opacity)
+          .opacity(tSpanDescriptor.props.opacity)
         // .fontColor(getColor(tSpanDescriptor.props.fill?.payload))
       })
     }

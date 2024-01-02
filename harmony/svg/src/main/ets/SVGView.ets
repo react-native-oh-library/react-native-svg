@@ -25,7 +25,6 @@
 import {
   Descriptor,
   ComponentBuilderContext,
-  RNComponentFactory,
   RNOHContext,
   RNViewBase,
   Tag,
@@ -34,6 +33,7 @@ import Logger from './common/log/Logger'
 import { getScaleX, getScaleY } from './common/SVGCommon'
 import { setViewDescriptor } from './common/SVGTempCache'
 import { SVGViewProps } from './common/SVGType'
+import { SVGComponentFactory } from './SVGComponentFactory'
 
 export const SVG_VIEW_TYPE_NAME: string = "RNSVGSvgView"
 
@@ -52,7 +52,7 @@ export struct SVGView {
     this.unregisterDescriptorChangesListener = this.ctx.descriptorRegistry.subscribeToDescriptorChanges(this.tag,
       (newDescriptor) => {
         this.descriptor = (newDescriptor as SVGViewDescriptor)
-		setViewDescriptor(this.tag, this.descriptor)
+        setViewDescriptor(this.tag, this.descriptor)
       }
     )
     setViewDescriptor(this.tag, this.descriptor)
@@ -74,7 +74,7 @@ export struct SVGView {
     }) {
       Stack() {
         ForEach(this.descriptor.childrenTags, (tag: Tag) => {
-          RNComponentFactory({ ctx: this.ctx, tag: tag, buildCustomComponent: this.buildCustomComponent })
+          SVGComponentFactory({ ctx: this.ctx, tag: tag, buildCustomComponent: this.buildCustomComponent })
         }, (tag: Tag) => tag.toString())
       }
       .width("100%")

@@ -23,54 +23,71 @@
  */
 
 import { Descriptor, RNOHContext } from 'rnoh'
-import { ImageLoaderTurboModule } from 'rnoh/src/main/ets/RNOHCorePackage/turboModules';
-import Logger from './common/log/Logger';
-import { getOffset, getTransform } from './common/SVGCommon'
-import { SVGImageProps } from './common/SVGType'
+import Logger from '../common/log/Logger'
+import { getOffset, getTransform, getColor, getRadius } from '../common/SVGCommon'
+import { getClipPathDescriptor } from '../common/SVGTempCache'
+import { SVGClipPathObj, SVGRectProps } from '../common/SVGType'
 
-export const SVG_IMAGE_TYPE_NAME: string = "RNSVGImage"
+export const SVG_RECT_TYPE_NAME: string = "RNSVGRect"
 
-export type SVGImageDescriptor = Descriptor<"RNSVGImage", SVGImageProps>
+export type SVGRectDescriptor = Descriptor<"RNSVGRect", SVGRectProps>
 
 @Component
-export struct SVGImage {
+export struct SVGRect {
   ctx!: RNOHContext
   tag: number = 0
-  @State descriptor: SVGImageDescriptor = {} as SVGImageDescriptor
+  @State descriptor: SVGRectDescriptor = {} as SVGRectDescriptor
   private unregisterDescriptorChangesListener?: () => void = undefined
 
   aboutToAppear() {
-    this.descriptor = this.ctx.descriptorRegistry.getDescriptor<SVGImageDescriptor>(this.tag)
+    this.descriptor = this.ctx.descriptorRegistry.getDescriptor<SVGRectDescriptor>(this.tag)
     this.unregisterDescriptorChangesListener = this.ctx.descriptorRegistry.subscribeToDescriptorChanges(this.tag,
       (newDescriptor) => {
-        this.descriptor = (newDescriptor as SVGImageDescriptor)
+        this.descriptor = (newDescriptor as SVGRectDescriptor)
       }
     )
-    Logger.debug("RNOH SVGImage", JSON.stringify(this.descriptor))
+    Logger.debug("RNOH SVGRect", JSON.stringify(this.descriptor))
   }
 
   aboutToDisappear() {
     this.unregisterDescriptorChangesListener?.()
   }
 
-  getSource(source: string) {
-    if (source.startsWith("asset://")) {
-      return $rawfile(source.replace("asset://", "assets/"));
+  getClipPath() {
+    if (!this.descriptor.props.clipPath) {
+      return undefined
     }
-    if (source.startsWith("file://assets/src/assets/")) {
-      return $rawfile(source.replace("file://assets/src/assets/", "assets/"));
+    let clipPathObjTemp: object | undefined = getClipPathDescriptor(this.descriptor.props.clipPath)
+    if (!clipPathObjTemp) {
+      return undefined
     }
-    const filePath = this.ctx.rnInstance.getTurboModule<ImageLoaderTurboModule>("ImageLoader").getCachedImage(source)
-    return filePath ?? source
+    let clipPathObj: SVGClipPathObj = clipPathObjTemp as SVGClipPathObj
+    if (!(clipPathObj.type && clipPathObj.value)) {
+      return undefined
+    }
+    if (clipPathObj.type == 'RNSVGRect') {
+      return clipPathObj.value as RectAttribute
+    }
+    return undefined
+  }
+
+  getOffset() {
+    return getOffset(this.descriptor.props.x, this.descriptor.props.y)
   }
 
   build() {
-    Image(this.getSource(this.descriptor.props.src))
+    Rect()
       .width(this.descriptor.props.width)
       .height(this.descriptor.props.height)
-      .autoResize(true)
-      .position(getOffset(this.descriptor.props.x, this.descriptor.props.y))
+      .position(this.getOffset())
+      .fill(getColor(this.descriptor.props.fill?.payload))
+      .fillOpacity(this.descriptor.props.fill?.payload ? this.descriptor.props.fillOpacity : 0)
+      .stroke(getColor(this.descriptor.props.stroke?.payload))
+      .strokeWidth(this.descriptor.props.strokeWidth)
+      .radiusWidth(getRadius(this.descriptor.props.rx, this.descriptor.props.ry))
+      .radiusHeight(getRadius(this.descriptor.props.ry, this.descriptor.props.rx))
       .opacity(this.descriptor.props.opacity)
       .transform(getTransform(this.descriptor.props.matrix))
+      .clip(this.getClipPath())
   }
 }

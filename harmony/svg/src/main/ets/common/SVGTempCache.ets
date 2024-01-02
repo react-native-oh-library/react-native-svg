@@ -24,7 +24,7 @@
 
 import HashMap from '@ohos.util.HashMap'
 import { SVGViewDescriptor } from '../SVGView'
-import { SVGGroupDescriptor } from '../SVGGroup'
+import { SVGGroupDescriptor } from '../components/SVGGroup'
 
 const viewCache: HashMap<number, SVGViewDescriptor> = new HashMap()
 const groupCache: HashMap<number, SVGGroupDescriptor> = new HashMap()

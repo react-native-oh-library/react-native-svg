@@ -23,9 +23,9 @@
  */
 
 import { Tag, RNOHContext, Descriptor } from 'rnoh'
-import { SVG_PATH_TYPE_NAME, SVGPathDescriptor } from "../SVGPath"
-import { SVG_RECT_TYPE_NAME, SVGRectDescriptor } from "../SVGRect"
-import { SVG_IMAGE_TYPE_NAME, SVGImageDescriptor } from "../SVGImage"
+import { SVG_PATH_TYPE_NAME, SVGPathDescriptor } from "../components/SVGPath"
+import { SVG_RECT_TYPE_NAME, SVGRectDescriptor } from "../components/SVGRect"
+import { SVG_IMAGE_TYPE_NAME, SVGImageDescriptor } from "../components/SVGImage"
 import { SVG_LINEAR_GRADIENT_TYPE_NAME, SVGLinearGradientDescriptor } from "./SVGLinearGradient"
 import { SVG_CLIP_PATH_TYPE_NAME, SVGClipPathDescriptor, SVGClipPathFactory } from './SVGClipPathFactory'
 import { parseLinearGradient } from './SVGLinearGradient'
