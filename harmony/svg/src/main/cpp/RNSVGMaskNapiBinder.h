@@ -58,13 +58,13 @@ public:
                 .addProperty("strokeMiterlimit", props->strokeMiterlimit)
                 .addProperty("vectorEffect", props->vectorEffect)
                 .addProperty("fontSize", props->fontSize);
-                .addProperty("fontWeight", props->fontSize);
-                .addProperty("x", props->fontSize);
-                .addProperty("y", props->fontSize);
-                .addProperty("height", props->fontSize);
-                .addProperty("width", props->fontSize);
-                .addProperty("maskUnits", props->fontSize);
-                .addProperty("maskContentUnits", props->fontSize);
+                .addProperty("fontWeight", props->fontWeight);
+                .addProperty("x", props->x);
+                .addProperty("y", props->y);
+                .addProperty("height", props->height);
+                .addProperty("width", props->width);
+                .addProperty("maskUnits", props->maskUnits);
+                .addProperty("maskContentUnits", props->maskContentUnits);
 
             auto matrix = std::vector<napi_value>();
             for (auto item : props->matrix) {
