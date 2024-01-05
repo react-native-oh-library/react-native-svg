@@ -136,7 +136,7 @@ export struct SVGGroup {
     this.descriptor.childrenTags.forEach((tag) => {
       type = this.ctx.descriptorRegistry.getDescriptor<Descriptor>(tag).type
       if (type == SVG_DEFS_TYPE_NAME) {
-        SVGDefsFactory(this.ctx, tag)
+        // SVGDefsFactory(this.ctx, tag)
       } else {
         childrenTag.push(tag)
         this.mergeProperties(type, tag)
