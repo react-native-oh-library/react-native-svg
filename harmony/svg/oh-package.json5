@@ -5,9 +5,9 @@
 
   },
   "name": "rnoh-svg",
-  "description": "Native part of react-native-svg",
+  "description": "c-api-foundation",
   "main": "index.ets",
-  "version": "13.14.0-0.2.3",
+  "version": "13.14.0-0.2.0",
   "dependencies": {
     "rnoh": "file:../rnoh"
   }
