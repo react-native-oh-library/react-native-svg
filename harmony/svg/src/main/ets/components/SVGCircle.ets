@@ -22,17 +22,17 @@
  * SOFTWARE.
  */
 
-import { Descriptor, RNOHContext, ViewDescriptorWrapperBase } from 'rnoh'
+import { Descriptor, RNOHContext, ViewDescriptorWrapperBase } from '@rnoh/react-native-openharmony'
 import { SVGCircleModifier } from '../attributeModifiers/SVGCircleModifier'
 import Logger from '../common/log/Logger';
-import { getColor, getFillOpacity, getGradient, getOffset, getStrokeWidth, getTransform } from '../common/SVGCommon';
+import { getColor, getRawColor, getFillOpacity, getRawFillOpacity, getGradient, getOffset, getStrokeWidth, getTransform } from '../common/SVGCommon';
 import { SVGLinearGradientValue } from '../common/SVGLinearGradient';
 import { getMaskDescriptor } from '../common/SVGTempCache';
-import { SVGCircleProps, SVGViewCommon } from '../common/SVGType'
+import { SVGCircleProps, SVGViewCommon, SVGViewRawCommon, SVGBaseRawProps, SVGState } from '../common/SVGType'
 
 export const SVG_CIRCLE_TYPE_NAME: string = "RNSVGCircle"
 
-export type SVGCircleDescriptor = Descriptor<"RNSVGCircle", SVGCircleProps>
+export type SVGCircleDescriptor = Descriptor<"RNSVGCircle", SVGCircleProps, SVGState, SVGBaseRawProps>
 
 export class SVGCircleDescriptorWrapper extends ViewDescriptorWrapperBase<"RNSVGCircle", SVGCircleProps> {
 }
@@ -41,7 +41,7 @@ export class SVGCircleDescriptorWrapper extends ViewDescriptorWrapperBase<"RNSVG
 export struct SVGCircle {
   ctx!: RNOHContext
   tag: number = 0
-  @Consume svgViewCommon: SVGViewCommon | undefined
+  @Consume svgViewCommon: SVGViewRawCommon | undefined
   @State descriptor: SVGCircleDescriptor = {} as SVGCircleDescriptor
   @State descriptorWrapper: SVGCircleDescriptorWrapper | undefined = undefined
   @State scaleValue: number = 1
@@ -78,12 +78,12 @@ export struct SVGCircle {
     Circle()
       .width(this.getDiameter())
       .height(this.getDiameter())
-      .fill(getColor(this.descriptor.props.fill?.payload))
-      .fillOpacity(getFillOpacity(this.descriptor.props.fill, this.descriptor.props.fillOpacity))
+      .fill(getRawColor(this.descriptor.rawProps.fill?.payload))
+      .fillOpacity(getRawFillOpacity(this.descriptor.rawProps.fill, this.descriptor.props.fillOpacity))
       .stroke(getColor(this.descriptor.props.stroke?.payload))
       .strokeWidth(getStrokeWidth(this.descriptor.props.strokeWidth))
       .opacity(this.descriptor.props.opacity)
-      .transform(getTransform(this.descriptor.props.matrix))
+      .transform(this.descriptor.props.combineMetrics)
       .position(getOffset(this.getCenterX(), this.getCenterY()))
       .linearGradient(this.gradient)
       .clip(this.getLinearGradientClip())
@@ -91,7 +91,7 @@ export struct SVGCircle {
 
     // Circle还不支持attributeModifier
     // .attributeModifier(SVGCircleModifier.getInstance()
-    //   .setDescriptor(this.descriptor, this.descriptorWrapper))
+    //   .setDescriptor(this.descriptor, this.descriptorWrapper, this.svgViewCommon))
   }
 
   getDiameter() {

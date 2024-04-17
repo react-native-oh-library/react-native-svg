@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-import { ColorSegments, convertColorSegmentsToString, TransformMatrix } from 'rnoh'
+import { ColorSegments, convertColorSegmentsToString, convertColorValueToHex, TransformMatrix } from '@rnoh/react-native-openharmony'
 import { getLinearGradientValue } from './SVGTempCache'
-import { SVGColorValue, SVGGroupBox, SVGOffset } from './SVGType'
+import { SVGColorValue, SVGRawColorValue, SVGGroupBox, SVGOffset } from './SVGType'
 import { SVGViewDescriptor } from '../SVGView'
 import matrix4 from '@ohos.matrix4'
 import { SVGLinearGradientValue } from './SVGLinearGradient'
@@ -126,8 +126,20 @@ export function getFillOpacity(fill: SVGColorValue | undefined, fillOpacity: num
   return 0
 }
 
+export function getRawFillOpacity(fill: SVGRawColorValue | undefined, fillOpacity: number): number {
+  if (fill?.payload) {
+    //部分组件fill [0,0,0,0] 无法显示透明，手动处理
+    return fill?.payload[3] == 0 ? 0 : fillOpacity
+  }
+  return 0
+}
+
 export function getColor(color?: ColorSegments): string | undefined {
   return convertColorSegmentsToString(color);
+}
+
+export function getRawColor(color?: number): string | undefined {
+  return convertColorValueToHex(color);
 }
 
 export function getRadius(rx?: string, ry?: string): string | number | undefined {
@@ -150,5 +162,31 @@ export function getGradient(fill?: SVGColorValue): SVGLinearGradientValue | unde
   } else {
     return undefined
   }
+}
+
+export function calculateOffset(parentWidth: number, parentHeight: number, childWidth: number, childHeight: number): SVGOffset {
+  // 子容器的宽高比
+  const childAspectRatio = childWidth / childHeight;
+
+  // 计算子容器在父容器中可放大的最大宽度和高度
+  let scaledWidth: number, scaledHeight: number;
+  if (parentWidth / parentHeight < childAspectRatio) {
+    // 宽度是限制因素，按宽度缩放高度
+    scaledWidth = parentWidth;
+    scaledHeight = parentWidth / childAspectRatio;
+  } else {
+    // 高度是限制因素，按高度缩放宽度
+    scaledHeight = parentHeight;
+    scaledWidth = parentHeight * childAspectRatio;
+  }
+
+  // 计算子容器在父容器中居中所需的x、y偏移量
+  const offsetX = (parentWidth - scaledWidth) / 2;
+  const offsetY = (parentHeight - scaledHeight) / 2;
+  // 返回偏移量对象
+  return {
+    x: offsetX,
+    y: offsetY,
+  };
 }
 

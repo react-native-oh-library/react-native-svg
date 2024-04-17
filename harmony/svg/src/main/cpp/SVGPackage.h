@@ -23,15 +23,18 @@
  */
 
 #pragma once
-
 #include "RNOH/Package.h"
+#include <glog/logging.h>
+
+using namespace rnoh;
+using namespace facebook;
 
 namespace rnoh {
 
 class SVGPackage : public Package {
 public:
     explicit SVGPackage(Package::Context ctx) : Package(ctx) {}
-    
+
     std::vector<facebook::react::ComponentDescriptorProvider> createComponentDescriptorProviders() override;
     
     ComponentNapiBinderByString createComponentNapiBinderByName() override;

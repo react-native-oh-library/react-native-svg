@@ -24,7 +24,7 @@
 
 import { getTransform } from '../common/SVGCommon';
 import { SVGGroupDescriptor, SVGGroupDescriptorWrapper } from '../components/SVGGroup';
-import { SVGViewCommon } from '../common/SVGType';
+import { SVGViewCommon, SVGViewRawCommon } from '../common/SVGType';
 import { SVG_VIEW_TYPE_NAME } from '../SVGView';
 
 export class SVGGroupModifier implements AttributeModifier<ShapeAttribute> {
@@ -34,7 +34,7 @@ export class SVGGroupModifier implements AttributeModifier<ShapeAttribute> {
   private static instance: SVGGroupModifier;
   protected descriptor: SVGGroupDescriptor = Object() as SVGGroupDescriptor;
   protected descriptorWrapper: SVGGroupDescriptorWrapper | undefined = undefined;
-  protected svgViewCommon: SVGViewCommon | undefined = undefined;
+  protected svgViewCommon: SVGViewRawCommon | undefined = undefined;
   private scaleValue: number = 1;
   protected parentType: string | undefined = undefined;
 
@@ -47,7 +47,7 @@ export class SVGGroupModifier implements AttributeModifier<ShapeAttribute> {
 
   setDescriptor(descriptor: SVGGroupDescriptor,
                 descriptorWrapper: SVGGroupDescriptorWrapper | undefined,
-                svgViewCommon: SVGViewCommon | undefined,
+                svgViewCommon: SVGViewRawCommon | undefined,
                 parentType: string | undefined): SVGGroupModifier {
     this.descriptor = descriptor;
     this.descriptorWrapper = descriptorWrapper;
@@ -87,8 +87,8 @@ export class SVGGroupModifier implements AttributeModifier<ShapeAttribute> {
       instance.opacity(this.descriptor.props.opacity);
     }
 
-    if (this.descriptor.props.matrix?.length === 6) {
-      instance.transform(getTransform(this.descriptor.props.matrix));
-    }
+    // if (this.descriptor.props.matrix?.length === 6) {
+    //   instance.transform(getTransform(this.descriptor.props.matrix));
+    // }
   }
 }

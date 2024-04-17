@@ -21,7 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import { ViewBaseProps } from 'rnoh/ts';
+import { ViewBaseProps, ViewRawProps } from '@rnoh/react-native-openharmony/ts';
+import matrix4 from '@ohos.matrix4';
 
 /** 0-1 */
 export type NormalizedScalar = number
@@ -42,6 +43,14 @@ export type SVGColorValue = {
   brushRef?: string
 }
 
+export type SVGRawColorValue = {
+  type: number,
+  payload?: number,
+  brushRef?: string
+}
+
+export interface SVGState {};
+
 export type SVGGroupBox = {
   width: number,
   height: number,
@@ -58,6 +67,15 @@ export type SVGViewCommon = {
   svgColor?: ColorSegments,
 }
 
+export type SVGViewRawCommon = {
+  svgTag: number,
+  scaleValue: number,
+  groupBox: SVGGroupBox,
+  svgWidth: number,
+  svgHeight: number,
+  svgColor?: number,
+}
+
 export interface SVGCommonProps extends ViewBaseProps {
   name?: string,
   opacity?: number,
@@ -71,6 +89,7 @@ export interface SVGCommonProps extends ViewBaseProps {
   responsible?: boolean,
   display?: string,
   pointerEvents?: string
+  combineMetrics: matrix4.Matrix4Transit
 }
 
 export interface SVGMaskProps extends SVGCommonProps {}
@@ -92,6 +111,10 @@ export interface SVGBaseProps extends SVGCommonProps {
   svgViewTag?: number
 }
 
+export interface SVGBaseRawProps extends ViewRawProps {
+  fill?: SVGRawColorValue,
+}
+
 export interface SVGViewProps extends ViewBaseProps {
   bbWidth?: string,
   bbHeight?: string,
@@ -104,6 +127,11 @@ export interface SVGViewProps extends ViewBaseProps {
   tintColor?: ColorSegments,
   color?: ColorSegments,
   pointerEvents?: number
+}
+
+export interface SVGViewRawProps extends ViewRawProps {
+  fill?: SVGRawColorValue,
+  color?: number,
 }
 
 export interface SVGGroupProps extends SVGBaseProps {

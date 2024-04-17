@@ -33,7 +33,7 @@ import {
   resolveBorderMetrics,
   RNOHContext,
   TransformMatrix
-} from 'rnoh';
+} from '@rnoh/react-native-openharmony';
 import matrix4 from '@ohos.matrix4';
 import { SVGViewDescriptor, SVGViewDescriptorWrapper } from '../SVGView';
 
@@ -117,9 +117,10 @@ export class SVGViewModifier implements AttributeModifier<StackAttribute> {
     if (this.descriptorWrapper?.opacity) {
       instance.opacity(this.descriptorWrapper?.opacity)
     }
-    if (this.descriptorWrapper?.transformStringify !== '[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]') {
+    if (JSON.stringify(this.descriptorWrapper?.rawTransformationMatrix) !== '[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]') {
       instance.transform(this.getTransform())
     }
+
     // if (this.descriptorWrapper?.isClipping) {
     //   instance.clip(this.descriptorWrapper?.isClipping)
     // }

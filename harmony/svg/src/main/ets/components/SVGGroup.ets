@@ -23,26 +23,29 @@
  * SOFTWARE.
  */
 
-import { Descriptor, RNOHContext, ComponentBuilderContext, Tag, ViewDescriptorWrapperBase } from 'rnoh'
-import { SVGBaseProps, SVGGroupProps, SVGViewCommon } from '../common/SVGType'
+import { Descriptor, RNOHContext, ComponentBuilderContext, Tag, ViewDescriptorWrapperBase,
+  convertColorValueToColorSegments } from '@rnoh/react-native-openharmony'
+import { SVGBaseProps, SVGBaseRawProps, SVGState, SVGGroupProps, SVGViewCommon, SVGViewRawCommon } from '../common/SVGType'
 import { setDefsDescriptor, setGroupDescriptor } from '../common/SVGTempCache'
 import { SVG_DEFS_TYPE_NAME, SVGDefsFactory } from '../common/SVGDefsFactory'
 import Logger from '../common/log/Logger'
 import { SVGPathDescriptor, SVG_PATH_TYPE_NAME } from './SVGPath'
 import { SVGRectDescriptor, SVG_RECT_TYPE_NAME } from './SVGRect'
-import { parseFill, parseStroke } from '../common/SVGMergeProperties'
+import { parseFill, parseRawFill, parseStroke } from '../common/SVGMergeProperties'
 import { SVGTextDescriptor, SVG_TEXT_TYPE_NAME } from './SVGText'
 import { SVGImageDescriptor, SVG_IMAGE_TYPE_NAME } from './SVGImage'
 import { svgComponentFactoryBuilder } from '../SVGComponentFactory'
 import { SVGCircleDescriptor, SVG_CIRCLE_TYPE_NAME } from './SVGCircle'
 import { SVGGroupModifier } from '../attributeModifiers/SVGGroupModifier'
 import { SVGMask, SVG_Mask_TYPE_NAME } from '../common/SVGMask'
+import { getTransform } from '../common/SVGCommon'
+import matrix4 from '@ohos.matrix4';
 
 export const SVG_GROUP_TYPE_NAME: string = "RNSVGGroup"
 
 export const inheritedComponents: string[] = [SVG_PATH_TYPE_NAME, SVG_RECT_TYPE_NAME, SVG_TEXT_TYPE_NAME]
 
-export type SVGGroupDescriptor = Descriptor<"RNSVGGroup", SVGGroupProps>
+export type SVGGroupDescriptor = Descriptor<"RNSVGGroup", SVGGroupProps, SVGState, SVGBaseRawProps>
 
 export class SVGGroupDescriptorWrapper extends ViewDescriptorWrapperBase<"RNSVGGroup", SVGGroupProps> {
 }
@@ -51,7 +54,7 @@ export class SVGGroupDescriptorWrapper extends ViewDescriptorWrapperBase<"RNSVGG
 export struct SVGGroup {
   ctx!: RNOHContext
   tag: number = 0
-  @Consume svgViewCommon: SVGViewCommon | undefined
+  @Consume svgViewCommon: SVGViewRawCommon | undefined
   @BuilderParam buildCustomComponent: (ctx: ComponentBuilderContext) => void
   @State private descriptorWrapper: SVGGroupDescriptorWrapper | undefined = undefined
   @State descriptor: SVGGroupDescriptor = {} as SVGGroupDescriptor
@@ -95,20 +98,49 @@ export struct SVGGroup {
     if (parentPropList && parentPropList.length > 0) {
       descriptor.props.propList = propList.concat(parentPropList);
       parentPropList.forEach((prop: string) => {
+        if (prop === 'fill') {
+          if (!descriptor.rawProps[prop]) {
+            descriptor.rawProps[prop] = this.descriptor.rawProps[prop]
+          } else {
+            descriptor.rawProps.fill = parseRawFill(descriptor.rawProps.fill, this.descriptor.rawProps.fill, this.svgViewCommon?.svgColor)
+          }
+        }
         if (!descriptor.props[prop]) {
           descriptor.props[prop] = this.descriptor.props[prop]
         } else {
           switch (prop) {
-            case 'fill':
-              descriptor.props.fill = parseFill(descriptor.props.fill, this.descriptor.props.fill, this.svgViewCommon?.svgColor)
-              break;
+            // case 'fill':
+              // descriptor.props.fill = parseFill(descriptor.props.fill, this.descriptor.props.fill, this.svgViewCommon?.svgColor)
+              // break;
             case 'stroke':
-              descriptor.props.stroke = parseStroke(descriptor.props.stroke, this.descriptor.props.stroke, this.svgViewCommon?.svgColor)
+              descriptor.props.stroke = parseStroke(descriptor.props.stroke, this.descriptor.props.stroke, convertColorValueToColorSegments(this.svgViewCommon?.svgColor))
               break;
           }
         }
       })
     }
+  }
+
+  basicMerge (tag: number, type: string) {
+    const childDescriptor = this.ctx.descriptorRegistry.getDescriptor<SVGGroupDescriptor | SVGPathDescriptor | SVGRectDescriptor | SVGImageDescriptor | SVGTextDescriptor | SVGCircleDescriptor>(tag)
+    if (!childDescriptor) {
+      return
+    }
+    const parentDescriptor = this.descriptor
+    if (parentDescriptor.props.mask) {
+      if (!childDescriptor.props.mask) {
+        childDescriptor.props.mask = parentDescriptor.props.mask
+      }
+    }
+    let perentMatrics : matrix4.Matrix4Transit
+    if (!parentDescriptor.props.combineMetrics) {
+      perentMatrics = getTransform(parentDescriptor.props.matrix) as matrix4.Matrix4Transit
+    } else {
+      perentMatrics = parentDescriptor.props.combineMetrics
+    }
+    const childMatrics = getTransform(childDescriptor.props.matrix) as matrix4.Matrix4Transit
+    const combineMetrics: matrix4.Matrix4Transit = perentMatrics.copy().combine(childMatrics)
+    childDescriptor.props.combineMetrics = combineMetrics
   }
 
   commonPropMerge(type: string, tag: number) {
@@ -134,8 +166,11 @@ export struct SVGGroup {
     }
     if (descriptor) {
       descriptor.layoutMetrics.frame.origin = this.descriptor.layoutMetrics.frame.origin
-      descriptor.props.fill = parseFill(descriptor.props.fill, this.descriptor.props.fill, this.svgViewCommon?.svgColor)
-      descriptor.props.stroke = parseStroke(descriptor.props.stroke, this.descriptor.props.stroke, this.svgViewCommon?.svgColor)
+      descriptor.rawProps.fill = parseRawFill(descriptor.rawProps.fill, this.descriptor.rawProps.fill, this.svgViewCommon?.svgColor)
+      descriptor.props.stroke = parseStroke(descriptor.props.stroke, this.descriptor.props.stroke, convertColorValueToColorSegments(this.svgViewCommon?.svgColor))
+      if (this.descriptor.props.mask) {
+        descriptor.props.mask = this.descriptor.props.mask
+      }
     }
   }
 
@@ -144,10 +179,13 @@ export struct SVGGroup {
     let type: string = ''
     this.descriptor.childrenTags.forEach((tag) => {
       const descriptor = this.ctx.descriptorRegistry.getDescriptor<Descriptor<"", SVGBaseProps>>(tag)
-      if (descriptor.props.name) {
+      if (descriptor === undefined) {
+        Logger.error(`SVGGroup Get Children Descriptor return undefined!`)
+      }
+      if (descriptor?.props.name) {
         setDefsDescriptor(descriptor.props.name, descriptor)
       }
-      type = descriptor.type
+      type = descriptor?.type;
       if (type === SVG_DEFS_TYPE_NAME) {
         SVGDefsFactory(this.ctx, tag)
       } else if (type === SVG_Mask_TYPE_NAME) {
@@ -156,6 +194,7 @@ export struct SVGGroup {
         childrenTag.push(tag)
         this.mergeProperties(type, tag)
       }
+      this.basicMerge(tag, type)
     })
     return childrenTag
   }

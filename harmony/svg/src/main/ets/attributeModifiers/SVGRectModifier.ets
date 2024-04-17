@@ -24,7 +24,9 @@
 
 import {
   getColor,
+  getRawColor,
   getFillOpacity,
+  getRawFillOpacity,
   getGradient,
   getOffset,
   getRadius,
@@ -33,10 +35,11 @@ import {
   getStrokeWidth,
   getTransform
 } from '../common/SVGCommon';
-import { SVGClipPathObj, SVGViewCommon } from '../common/SVGType';
+import { SVGClipPathObj, SVGViewCommon, SVGViewRawCommon } from '../common/SVGType';
 import { getClipPathDescriptor, getMaskDescriptor } from '../common/SVGTempCache';
 import { SVGRectDescriptor, SVGRectDescriptorWrapper } from '../components/SVGRect';
 import { SVGLinearGradientValue } from '../common/SVGLinearGradient';
+import { convertColorValueToColorSegments } from '@rnoh/react-native-openharmony';
 
 export class SVGRectModifier implements AttributeModifier<RectAttribute> {
   private constructor() {
@@ -45,7 +48,7 @@ export class SVGRectModifier implements AttributeModifier<RectAttribute> {
   private static instance: SVGRectModifier;
   protected descriptor: SVGRectDescriptor = Object() as SVGRectDescriptor;
   protected descriptorWrapper: SVGRectDescriptorWrapper | undefined = undefined;
-  protected svgViewCommon: SVGViewCommon | undefined = undefined;
+  protected svgViewCommon: SVGViewRawCommon | undefined = undefined;
   private scaleValue: number = 1;
   private gradient: SVGLinearGradientValue | undefined = undefined;
 
@@ -58,7 +61,7 @@ export class SVGRectModifier implements AttributeModifier<RectAttribute> {
 
   setDescriptor(descriptor: SVGRectDescriptor,
                 descriptorWrapper: SVGRectDescriptorWrapper | undefined,
-                svgViewCommon: SVGViewCommon | undefined): SVGRectModifier {
+                svgViewCommon: SVGViewRawCommon | undefined): SVGRectModifier {
     this.descriptor = descriptor;
     this.descriptorWrapper = descriptorWrapper;
     this.svgViewCommon = svgViewCommon;
@@ -80,11 +83,11 @@ export class SVGRectModifier implements AttributeModifier<RectAttribute> {
 
     instance.position(getOffset(this.descriptor.props.x, this.descriptor.props.y));
 
-    if (JSON.stringify(this.descriptor?.props.fill?.payload) !== '[0,0,0,1]') {
-      instance.fill(getColor(this.descriptor.props.fill?.payload));
+    if (JSON.stringify(convertColorValueToColorSegments(this.descriptor?.rawProps.fill?.payload)) !== '[0,0,0,1]') {
+      instance.fill(getRawColor(this.descriptor.rawProps.fill?.payload));
     }
 
-    let fillOpacity = getFillOpacity(this.descriptor.props.fill, this.descriptor.props.fillOpacity)
+    let fillOpacity = getRawFillOpacity(this.descriptor.rawProps.fill, this.descriptor.props.fillOpacity)
     if (fillOpacity !== 1) {
       instance.fillOpacity(fillOpacity);
     }
@@ -129,7 +132,13 @@ export class SVGRectModifier implements AttributeModifier<RectAttribute> {
       instance.radiusHeight(getRadius(this.descriptor.props.ry, this.descriptor.props.rx));
     }
 
-    if (this.descriptor.props.matrix?.length === 6) {
+    // if (this.descriptor.props.matrix?.length === 6) {
+    //   instance.transform(getTransform(this.descriptor.props.matrix));
+    // }
+    if(this.descriptor.props.combineMetrics) {
+      instance.transform(this.descriptor.props.combineMetrics)
+    }
+    else if (this.descriptor.props.matrix?.length === 6) {
       instance.transform(getTransform(this.descriptor.props.matrix));
     }
 

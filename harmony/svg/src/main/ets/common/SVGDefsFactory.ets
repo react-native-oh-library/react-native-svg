@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import { Tag, RNOHContext, Descriptor } from 'rnoh'
+import { Tag, RNOHContext, Descriptor } from '@rnoh/react-native-openharmony'
 import { SVG_PATH_TYPE_NAME, SVGPathDescriptor } from "../components/SVGPath"
 import { SVG_RECT_TYPE_NAME, SVGRectDescriptor } from "../components/SVGRect"
 import { SVG_IMAGE_TYPE_NAME, SVGImageDescriptor } from "../components/SVGImage"
@@ -51,7 +51,7 @@ export type SVGDefsDescriptor = Descriptor<"RNSVGDefs", SVGDefsProps>
 
 export function SVGDefsFactory(ctx: RNOHContext, tag: number) {
   const descriptor: Descriptor<"", SVGBaseProps> = ctx.descriptorRegistry.getDescriptor(tag);
-  if (descriptor.childrenTags && (descriptor.childrenTags.length != 0)) {
+  if (descriptor?.childrenTags && (descriptor?.childrenTags.length != 0)) {
     for (const childTag of descriptor.childrenTags) {
       SVGDefsFactory(ctx, childTag);
     }

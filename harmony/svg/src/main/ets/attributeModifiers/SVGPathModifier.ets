@@ -25,15 +25,19 @@
 import { SVGPathDescriptor, SVGPathDescriptorWrapper } from '../components/SVGPath';
 import {
   getColor,
+  getRawColor,
+  getRawFillOpacity,
   getGradient,
   getStrokeLineCap,
   getStrokeLineJoin,
   getStrokeWidth,
-  getTransform
+  getTransform,
+  calculateOffset,
 } from '../common/SVGCommon';
-import { SVGViewCommon } from '../common/SVGType';
+import { SVGViewCommon, SVGViewRawCommon, SVGOffset } from '../common/SVGType';
 import { SVGLinearGradientValue } from '../common/SVGLinearGradient';
 import { getMaskDescriptor } from '../common/SVGTempCache';
+import { convertColorValueToColorSegments } from '@rnoh/react-native-openharmony';
 
 export class SVGPathModifier implements AttributeModifier<PathAttribute> {
   private constructor() {
@@ -42,7 +46,7 @@ export class SVGPathModifier implements AttributeModifier<PathAttribute> {
   private static instance: SVGPathModifier;
   protected descriptor: SVGPathDescriptor = Object() as SVGPathDescriptor;
   protected descriptorWrapper: SVGPathDescriptorWrapper | undefined = undefined;
-  protected svgViewCommon: SVGViewCommon | undefined = undefined;
+  protected svgViewCommon: SVGViewRawCommon | undefined = undefined;
   private scaleValue: number = 1;
   private defaultScaleValue: number = vp2px(1);
   private percentage: string = '100%';
@@ -57,7 +61,7 @@ export class SVGPathModifier implements AttributeModifier<PathAttribute> {
 
   setDescriptor(descriptor: SVGPathDescriptor,
                 descriptorWrapper: SVGPathDescriptorWrapper | undefined,
-                svgViewCommon: SVGViewCommon | undefined): SVGPathModifier {
+                svgViewCommon: SVGViewRawCommon | undefined): SVGPathModifier {
     this.descriptor = descriptor;
     this.descriptorWrapper = descriptorWrapper;
     this.svgViewCommon = svgViewCommon;
@@ -72,6 +76,19 @@ export class SVGPathModifier implements AttributeModifier<PathAttribute> {
   applyNormalAttribute(instance: PathAttribute): void {
     instance.position(this.descriptor.layoutMetrics.frame.origin);
 
+    if (this.svgViewCommon) {
+      const groupBox = this.svgViewCommon.groupBox
+      const svgWidth = this.svgViewCommon.svgWidth
+      const svgHeight = this.svgViewCommon.svgHeight
+      if ((svgWidth / svgHeight) != (groupBox.width / groupBox.height)) {
+        const offset: SVGOffset = calculateOffset(svgWidth, svgHeight, groupBox.width, groupBox.height)
+        instance.translate({
+          x : `${offset.x as number / this.svgViewCommon.scaleValue}`,
+          y: `${offset.y as number / this.svgViewCommon.scaleValue }`,
+        })
+      }
+    }
+
     if (this.descriptor.props.d) {
       instance.commands(this.descriptor.props.d);
     } else {
@@ -81,11 +98,12 @@ export class SVGPathModifier implements AttributeModifier<PathAttribute> {
       return
     }
 
-    if (JSON.stringify(this.descriptor?.props.fill?.payload) !== '[0,0,0,1]') {
-      instance.fill(getColor(this.descriptor.props.fill?.payload));
+    if (JSON.stringify(convertColorValueToColorSegments(this.descriptor?.rawProps.fill?.payload)) !== '[0,0,0,1]') {
+      instance.fill(getRawColor(this.descriptor.rawProps.fill?.payload));
     }
 
-    let fillOpacity = this.descriptor.props.fill?.payload ? this.descriptor.props.fillOpacity : 0
+    // let fillOpacity = this.descriptor.rawProps.fill?.payload ? this.descriptor.props.fillOpacity : 0
+    let fillOpacity = getRawFillOpacity(this.descriptor.rawProps.fill, this.descriptor.props.fillOpacity)
     if (fillOpacity !== 1) {
       instance.fillOpacity(fillOpacity);
     }
@@ -124,7 +142,13 @@ export class SVGPathModifier implements AttributeModifier<PathAttribute> {
       instance.opacity(this.descriptor.props.opacity);
     }
 
-    if (this.descriptor.props.matrix?.length === 6) {
+    // if (this.descriptor.props.matrix?.length === 6) {
+    //   instance.transform(getTransform(this.descriptor.props.matrix));
+    // }
+    if(this.descriptor.props.combineMetrics) {
+      instance.transform(this.descriptor.props.combineMetrics)
+    }
+    else if (this.descriptor.props.matrix?.length === 6) {
       instance.transform(getTransform(this.descriptor.props.matrix));
     }
 
