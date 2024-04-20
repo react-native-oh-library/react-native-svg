@@ -33,6 +33,7 @@ import { SVGEllipse, SVG_ELLIPSE_TYPE_NAME } from './components/SVGEllipse'
 import { SVGViewCommon } from './common/SVGType'
 import { SVG_Mask_TYPE_NAME } from './common/SVGMask'
 import { SVGUse, SVG_USE_TYPE_NAME } from './components/SVGUse'
+import { SVGRadialGradient, SVG_RADIAL_GRADIENT_TYPE_NAME } from './components/SVGRadialGradient'
 
 export type CustomComponentBuilder = (ctx: ComponentBuilderContext) => void
 
@@ -86,6 +87,8 @@ export struct SVGComponentFactory {
       SVGText({ ctx: this.ctx, tag: this.tag })
     } else if (this.componentName === SVG_CIRCLE_TYPE_NAME) {
       SVGCircle({ ctx: this.ctx, tag: this.tag })
+    } else if (this.componentName === SVG_RADIAL_GRADIENT_TYPE_NAME) {
+      SVGRadialGradient({ ctx: this.ctx, tag: this.tag })
     }
     // else if (this.componentName === SVG_ELLIPSE_TYPE_NAME) {
     //   SVGEllipse({ ctx: this.ctx, tag: this.tag })
@@ -113,6 +116,8 @@ export function svgComponentFactoryBuilder(ctx: RNOHContext, tag: Tag, component
     SVGUse({ ctx: ctx, tag: tag })
   } else if (componentName === SVG_CIRCLE_TYPE_NAME) {
     SVGCircle({ ctx: ctx, tag: tag })
+  } else if (componentName === SVG_RADIAL_GRADIENT_TYPE_NAME) {
+    SVGRadialGradient({ ctx: ctx, tag: tag })
   }
   // else if (componentName === SVG_ELLIPSE_TYPE_NAME) {
   //   SVGEllipse({ ctx: ctx, tag: tag })

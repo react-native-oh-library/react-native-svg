@@ -24,31 +24,20 @@
 
 #pragma once
 
-#include <jsi/jsi.h>
-#include <react/renderer/components/view/ViewProps.h>
-#include <react/renderer/core/PropsParserContext.h>
-#include <react/renderer/core/propsConversions.h>
-#include <react/renderer/graphics/Color.h>
-#include <react/renderer/imagemanager/primitives.h>
-#include <vector>
-#include "RNSVGGroupProps.h"
-#include "RNSVGSvgViewProps.h"
-#include "RNSVGPathProps.h"
-#include "RNSVGRectProps.h"
-#include "RNSVGImageProps.h"
-#include "RNSVGCircleProps.h"
-#include "RNSVGEllipseProps.h"
-#include "RNSVGLinearGradientProps.h"
-#include "RNSVGDefsProps.h"
-#include "RNSVGTextProps.h"
-#include "RNSVGTSpanProps.h"
-#include "RNSVGClipPathProps.h"
-#include "RNSVGMaskProps.h"
-#include "RNSVGUseProps.h"
-#include "RNSVGRadialGradientProps.h"
+#include "RNOHCorePackage/ComponentBinders/ViewComponentJSIBinder.h"
 
-namespace facebook {
-namespace react {
+namespace rnoh {
 
-} // namespace react
-} // namespace facebook
+class RNSVGRadialGradientJSIBinder : public ViewComponentJSIBinder {
+    facebook::jsi::Object createNativeProps(facebook::jsi::Runtime &rt) override
+    {
+        auto object = ViewComponentJSIBinder::createNativeProps(rt);
+        return object;
+    }
+
+    facebook::jsi::Object createBubblingEventTypes(facebook::jsi::Runtime &rt) override
+    {
+        return facebook::jsi::Object(rt);
+    }
+};
+} // namespace rnoh

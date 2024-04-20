@@ -40,6 +40,7 @@
 #include "RNSVGClipPathNapiBinder.h"
 #include "RNSVGMaskNapiBinder.h"
 #include "RNSVGUseNapiBinder.h"
+#include "RNSVGRadialGradientNapiBinder.h"
 
 #include "RNSVGGroupJSIBinder.h"
 #include "RNSVGSvgViewJSIBinder.h"
@@ -55,6 +56,7 @@
 #include "RNSVGClipPathJSIBinder.h"
 #include "RNSVGMaskJSIBinder.h"
 #include "RNSVGUseJSIBinder.h"
+#include "RNSVGRadialGradientJSIBinder.h"
 
 using namespace rnoh;
 using namespace facebook;
@@ -74,7 +76,8 @@ std::vector<react::ComponentDescriptorProvider> SVGPackage::createComponentDescr
             react::concreteComponentDescriptorProvider<react::RNSVGTSpanComponentDescriptor>(),
             react::concreteComponentDescriptorProvider<react::RNSVGClipPathComponentDescriptor>(),
             react::concreteComponentDescriptorProvider<react::RNSVGMaskComponentDescriptor>(),
-            react::concreteComponentDescriptorProvider<react::RNSVGUseComponentDescriptor>()};
+            react::concreteComponentDescriptorProvider<react::RNSVGUseComponentDescriptor>(),
+            react::concreteComponentDescriptorProvider<react::RNSVGRadialGradientComponentDescriptor>()};
 }
 
 ComponentNapiBinderByString rnoh::SVGPackage::createComponentNapiBinderByName()
@@ -92,7 +95,8 @@ ComponentNapiBinderByString rnoh::SVGPackage::createComponentNapiBinderByName()
             {"RNSVGTSpan", std::make_shared<RNSVGTSpanNapiBinder>()},
             {"RNSVGClipPath", std::make_shared<RNSVGClipPathNapiBinder>()},
             {"RNSVGMask", std::make_shared<RNSVGMaskNapiBinder>()},
-            {"RNSVGUse", std::make_shared<RNSVGUseNapiBinder>()}};
+            {"RNSVGUse", std::make_shared<RNSVGUseNapiBinder>()},
+            {"RNSVGRadialGradient", std::make_shared<RNSVGRadialGradientNapiBinder>()}};
 }
 
 ComponentJSIBinderByString rnoh::SVGPackage::createComponentJSIBinderByName()
@@ -110,5 +114,6 @@ ComponentJSIBinderByString rnoh::SVGPackage::createComponentJSIBinderByName()
             {"RNSVGTSpan", std::make_shared<RNSVGTSpanJSIBinder>()},
             {"RNSVGClipPath", std::make_shared<RNSVGClipPathJSIBinder>()},
             {"RNSVGMask", std::make_shared<RNSVGMaskJSIBinder>()},
-            {"RNSVGUse", std::make_shared<RNSVGUseJSIBinder>()}};
+            {"RNSVGUse", std::make_shared<RNSVGUseJSIBinder>()},
+            {"RNSVGRadialGradient", std::make_shared<RNSVGRadialGradientJSIBinder>()}};
 };

@@ -22,33 +22,17 @@
  * SOFTWARE.
  */
 
-#pragma once
-
-#include <jsi/jsi.h>
-#include <react/renderer/components/view/ViewProps.h>
+#include <react/renderer/components/image/conversions.h>
 #include <react/renderer/core/PropsParserContext.h>
 #include <react/renderer/core/propsConversions.h>
-#include <react/renderer/graphics/Color.h>
-#include <react/renderer/imagemanager/primitives.h>
-#include <vector>
-#include "RNSVGGroupProps.h"
-#include "RNSVGSvgViewProps.h"
-#include "RNSVGPathProps.h"
-#include "RNSVGRectProps.h"
-#include "RNSVGImageProps.h"
-#include "RNSVGCircleProps.h"
-#include "RNSVGEllipseProps.h"
-#include "RNSVGLinearGradientProps.h"
-#include "RNSVGDefsProps.h"
-#include "RNSVGTextProps.h"
-#include "RNSVGTSpanProps.h"
-#include "RNSVGClipPathProps.h"
-#include "RNSVGMaskProps.h"
-#include "RNSVGUseProps.h"
 #include "RNSVGRadialGradientProps.h"
 
 namespace facebook {
-namespace react {
+    namespace react {
 
-} // namespace react
+
+        RNSVGRadialGradientProps::RNSVGRadialGradientProps(const PropsParserContext &context, const RNSVGRadialGradientProps &sourceProps,
+                                         const RawProps &rawProps)
+            : ViewProps(context, sourceProps, rawProps){}
+    } // namespace react
 } // namespace facebook
