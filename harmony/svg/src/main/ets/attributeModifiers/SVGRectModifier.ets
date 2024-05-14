@@ -33,7 +33,12 @@ import {
   getStrokeLineCap,
   getStrokeLineJoin,
   getStrokeWidth,
-  getTransform
+  getTransform,
+  calcTransFormType,
+  getTransformRotate,
+  getTransformScale,
+  getTransformSkewX,
+  getTransformSkewY
 } from '../common/SVGCommon';
 import { SVGClipPathObj, SVGViewCommon, SVGViewRawCommon } from '../common/SVGType';
 import { getClipPathDescriptor, getMaskDescriptor } from '../common/SVGTempCache';
@@ -132,14 +137,29 @@ export class SVGRectModifier implements AttributeModifier<RectAttribute> {
       instance.radiusHeight(getRadius(this.descriptor.props.ry, this.descriptor.props.rx));
     }
 
-    // if (this.descriptor.props.matrix?.length === 6) {
-    //   instance.transform(getTransform(this.descriptor.props.matrix));
-    // }
-    if(this.descriptor.props.combineMetrics) {
+    if (this.descriptor.props.matrix?.length === 6) {
+      let matrix = this.descriptor.props.matrix
+      const type = calcTransFormType(matrix)
+      const props = this.descriptor.props
+      switch (type) {
+        case 'rotate':
+          matrix = getTransformRotate(matrix, props.x, props.y, props.width, props.height);
+          break;
+        case 'scale':
+          matrix = getTransformScale(matrix, props.x, props.y, props.width, props.height);
+          break;
+        case 'skewX':
+          matrix = getTransformSkewX(matrix, props.x, props.y, props.width, props.height);
+          break;
+        case 'skewY':
+          matrix = getTransformSkewY(matrix, props.x, props.y, props.width, props.height);
+          break;
+        default:
+          break;
+      }
+      instance.transform(getTransform(matrix));
+    } else if(this.descriptor.props.combineMetrics) {
       instance.transform(this.descriptor.props.combineMetrics)
-    }
-    else if (this.descriptor.props.matrix?.length === 6) {
-      instance.transform(getTransform(this.descriptor.props.matrix));
     }
 
     if (this.gradient) {
