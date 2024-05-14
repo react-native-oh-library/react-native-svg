@@ -92,6 +92,77 @@ export function getTransform(matrix?: number[], scaleValue: number = defaultScal
   return matrix4.init(transform);
 }
 
+/**
+ * Calculate deformation types
+ * */
+export  function calcTransFormType(matrix: number[]) {
+  if (matrix[0] === 1 && matrix[1] === 0 && matrix[2] === 0 && matrix[3] === 1) {
+    return 'translate'
+  } else if (matrix[0] === 1 && matrix[1] === 0 && matrix[2] != 0 && matrix[3] === 1 && matrix[4] === 0 && matrix[5] === 0) {
+    return 'skewX'
+  } else if (matrix[0] === 1 && matrix[1] != 0 && matrix[2] === 0 && matrix[3] === 1 && matrix[4] === 0 && matrix[5] === 0) {
+    return 'skewY'
+  } else if (matrix[1] === 0 && matrix[2] === 0 && matrix[4] === 0 && matrix[5] === 0) {
+    return 'scale'
+  }
+  return 'rotate'
+}
+
+
+
+export function getTransformRotate(matrix: number[], px?: string, py?: string, pwidth?: string, pheight?: string):number[] {
+  const y = ((matrix[5] * (1 - matrix[0]) + matrix[4] * matrix[1])) / (matrix[1] * matrix[1] + (1- matrix[0]) * (1 - matrix[0]))
+  const x = ((1 - matrix[0]) * y - matrix[5]) / matrix[1]
+  const width = Number(pwidth);
+  const height = Number(pheight);
+  const propsx = Number(px);
+  const propsy = Number(py);
+  const newX = (x - width / 2 - propsx)
+  const newY = (y - height / 2 - propsy)
+  return [
+    matrix[0],
+    matrix[1],
+    matrix[2],
+    matrix[3],
+    matrix[0] * -newX + -matrix[1] * -newY + newX,
+    matrix[1] * -newX +  matrix[0] * -newY + newY
+  ]
+}
+
+export function getTransformScale(matrix: number[], px?: string, py?: string, pwidth?: string, pheight?: string):number[] {
+  return [
+    matrix[0],
+    matrix[1],
+    matrix[2],
+    matrix[3],
+    (0 - Number(pwidth) / 2 - Number(px)) * (1-matrix[0]),
+    (0 - Number(pheight) / 2 - Number(py)) * (1-matrix[3])
+  ]
+}
+
+export function getTransformSkewX(matrix: number[], px?: string, py?: string, pwidth?: string, pheight?: string):number[] {
+  return [
+    matrix[0],
+    matrix[1],
+    matrix[2],
+    matrix[3],
+    (Number(pwidth) / 2 + Number(px)) * matrix[2],
+    matrix[5]
+  ]
+}
+
+export function getTransformSkewY(matrix: number[], px?: string, py?: string, pwidth?: string, pheight?: string):number[] {
+  return [
+    matrix[0],
+    matrix[1],
+    matrix[2],
+    matrix[3],
+    matrix[4],
+    (Number(pheight) / 2 + Number(py)) * matrix[1]
+  ]
+}
+
+
 export function getStrokeWidth(strokeWidth?: string, scaleValue: number = 1): number {
   return strokeWidth ? Number(strokeWidth) / scaleValue : 1;
 }
