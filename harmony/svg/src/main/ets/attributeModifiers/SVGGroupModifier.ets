@@ -26,6 +26,7 @@ import { getTransform } from '../common/SVGCommon';
 import { SVGGroupDescriptor, SVGGroupDescriptorWrapper } from '../components/SVGGroup';
 import { SVGViewCommon, SVGViewRawCommon } from '../common/SVGType';
 import { SVG_VIEW_TYPE_NAME } from '../SVGView';
+import { calGroupBoxOffset, translateType } from './utils';
 
 export class SVGGroupModifier implements AttributeModifier<ShapeAttribute> {
   private constructor() {
@@ -63,18 +64,8 @@ export class SVGGroupModifier implements AttributeModifier<ShapeAttribute> {
     if (this.parentType == SVG_VIEW_TYPE_NAME && this.svgViewCommon) {
       instance.width(this.svgViewCommon.svgWidth / this.scaleValue);
       instance.height(this.svgViewCommon.svgHeight / this.scaleValue);
-
-      if (this.svgViewCommon.groupBox.minX !== 0 || this.svgViewCommon.groupBox.minY !== 0) {
-        instance.offset({
-          x: -(this.svgViewCommon.groupBox.minX * this.svgViewCommon.scaleValue || 0),
-          y: -(this.svgViewCommon.groupBox.minY * this.svgViewCommon.scaleValue || 0)
-        })
-      } else {
-        instance.offset({
-          x: (this.svgViewCommon.svgWidth - this.svgViewCommon.groupBox.width) / 2,
-          y: (this.svgViewCommon.svgHeight - this.svgViewCommon.groupBox.height) / 2
-        })
-      }
+      const groupBoxTranslate = calGroupBoxOffset(this.svgViewCommon);
+      this.svgViewCommon.groupBoxTranslate = groupBoxTranslate;
 
       instance.scale({ x: this.scaleValue, y: this.scaleValue });
 
