@@ -32,9 +32,8 @@ import {
   getStrokeLineJoin,
   getStrokeWidth,
   getTransform,
-  calculateOffset,
 } from '../common/SVGCommon';
-import { SVGViewCommon, SVGViewRawCommon, SVGOffset } from '../common/SVGType';
+import { SVGViewCommon, SVGViewRawCommon } from '../common/SVGType';
 import { SVGLinearGradientValue } from '../common/SVGLinearGradient';
 import { getMaskDescriptor } from '../common/SVGTempCache';
 import { convertColorValueToColorSegments } from '@rnoh/react-native-openharmony';
@@ -76,18 +75,6 @@ export class SVGPathModifier implements AttributeModifier<PathAttribute> {
   applyNormalAttribute(instance: PathAttribute): void {
     instance.position(this.descriptor.layoutMetrics.frame.origin);
 
-    if (this.svgViewCommon) {
-      const groupBox = this.svgViewCommon.groupBox
-      const svgWidth = this.svgViewCommon.svgWidth
-      const svgHeight = this.svgViewCommon.svgHeight
-      if ((svgWidth / svgHeight) != (groupBox.width / groupBox.height)) {
-        const offset: SVGOffset = calculateOffset(svgWidth, svgHeight, groupBox.width, groupBox.height)
-        instance.translate({
-          x : `${offset.x as number / this.svgViewCommon.scaleValue}`,
-          y: `${offset.y as number / this.svgViewCommon.scaleValue }`,
-        })
-      }
-    }
 
     if (this.descriptor.props.d) {
       instance.commands(this.descriptor.props.d);
@@ -100,6 +87,8 @@ export class SVGPathModifier implements AttributeModifier<PathAttribute> {
 
     if (JSON.stringify(convertColorValueToColorSegments(this.descriptor?.rawProps.fill?.payload)) !== '[0,0,0,1]') {
       instance.fill(getRawColor(this.descriptor.rawProps.fill?.payload));
+    } else if (!this.descriptor?.props.propList?.includes('fill')) {
+      instance.fill('rgba(0, 0, 0, 0)');
     }
 
     // let fillOpacity = this.descriptor.rawProps.fill?.payload ? this.descriptor.props.fillOpacity : 0
@@ -151,7 +140,7 @@ export class SVGPathModifier implements AttributeModifier<PathAttribute> {
     else if (this.descriptor.props.matrix?.length === 6) {
       instance.transform(getTransform(this.descriptor.props.matrix));
     }
-
+    instance.translate(this.svgViewCommon?.groupBoxTranslate);
     instance.scale({ x: this.defaultScaleValue, y: this.defaultScaleValue, centerX: 0, centerY: 0 });
 
     if (this.gradient) {

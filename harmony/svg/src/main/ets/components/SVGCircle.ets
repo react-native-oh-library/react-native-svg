@@ -88,7 +88,7 @@ export struct SVGCircle {
       .linearGradient(this.gradient)
       .clip(this.getLinearGradientClip())
       .mask(this.descriptor.props.mask ? getMaskDescriptor(this.descriptor.props.mask) : undefined)
-
+      .translate(this.svgViewCommon?.groupBoxTranslate);
     // Circle还不支持attributeModifier
     // .attributeModifier(SVGCircleModifier.getInstance()
     //   .setDescriptor(this.descriptor, this.descriptorWrapper, this.svgViewCommon))

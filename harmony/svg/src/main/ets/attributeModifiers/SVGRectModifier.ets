@@ -161,7 +161,8 @@ export class SVGRectModifier implements AttributeModifier<RectAttribute> {
     } else if(this.descriptor.props.combineMetrics) {
       instance.transform(this.descriptor.props.combineMetrics)
     }
-
+    
+    instance.translate(this.svgViewCommon?.groupBoxTranslate);
     if (this.gradient) {
       instance.linearGradient(this.gradient);
       instance.clip(new Rect({

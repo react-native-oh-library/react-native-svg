@@ -1,4 +1,4 @@
-import { Descriptor, RNOHContext, Tag ,RNViewBase} from "rnoh";
+import { Descriptor, RNOHContext, Tag ,RNViewBase} from "@rnoh/react-native-openharmony";
 export const SVG_RADIAL_GRADIENT_TYPE_NAME = "RNSVGRadialGradient";
 
 export type SVGRadialGradientDescriptor = Descriptor<"RNSVGRadialGradient">;

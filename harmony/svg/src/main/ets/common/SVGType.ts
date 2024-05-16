@@ -74,6 +74,7 @@ export type SVGViewRawCommon = {
   svgWidth: number,
   svgHeight: number,
   svgColor?: number,
+  groupBoxTranslate?: { x: number, y: number}
 }
 
 export interface SVGCommonProps extends ViewBaseProps {
