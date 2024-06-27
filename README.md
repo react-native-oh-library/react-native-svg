@@ -1,3 +1,11 @@
+该仓库已经迁移，请异步到最新的仓库 [react-native-harmony-svg](https://github.com/react-native-oh-library/react-native-harmony-svg).
+
+文档链接：https://gitee.com/react-native-oh-library/usage-docs/blob/master/zh-cn/react-native-svg-capi.md
+
+This repository is deprecated! Please use [react-native-harmony-svg](https://github.com/react-native-oh-library/react-native-harmony-svg) instead.
+
+doc: https://gitee.com/react-native-oh-library/usage-docs/blob/master/zh-cn/react-native-svg-capi.md
+
 <img src="https://user-images.githubusercontent.com/39658211/200319759-006c214f-941c-496c-a3c2-7de5b7ce33dc.png" width="100%" alt="React Native SVG at Software Mansion" >
 
 [![Version](https://img.shields.io/npm/v/react-native-svg.svg)](https://www.npmjs.com/package/react-native-svg)
